@@ -1,0 +1,43 @@
+Project Proposal 1
+
+1. Problem Statement: Clearly describe the real-world problem your software will address.
+
+	Students want to access blackboard content locally in a filesystem without using blackboard UI and students can't access their courses on blackboard via the API.
+	Therefore, Using a Blackboard Webscraper can grab files, assignments and folders from student's courses automatically.
+
+2. Objectives: Define what the system will achieve (functional and non-functional goals).
+
+	Functional Requirements:
+		. System allows the user to download all of the content from all of their courses in the current semester formatted and saved as files and directories on their local computer
+		. System stores user credentials to their outlook account using firefox's ProfileManager or as cached cookies and javascript localStorage or sessionStorage
+		. System retains file strucure as seen directly on blackboard's courses
+		. System doesnt redownload files or remove files on the user's computer
+		. System asks user for output path if there isnt one already stored on the machine
+		
+	Non-Functional Requirements:
+		. The system will allways recurse through every folder in every course to make sure it doesnt miss any data, this could be quite a long runtime on a laptop such as mine.
+		. The system might need some help logging in from the user or might flag the browser as suspicous, this may need to be addressed during the SDL
+		
+
+3. Scope & Limitations: Specify what features are included and excluded.
+
+	Features:
+		. pre-stored credentials for outlook and blackboard
+		. downloads all files from their blackboard account for the current semester
+
+	Limitations:
+		. probably a slow runtime for small machines
+		. will need the path of the output directory upon first run
+		. will need to login-in to outlook & blackboard on first run and possibly frequently depending on later additions
+
+
+4. Technology Stack: Identify programming language(s), frameworks, and tools.
+
+	Programming language: python 3.14 
+
+	Framework / Tools:
+		. python 3.14 selenium package: python interface for controlling browser instances
+		
+		. geckodriver:	gets input from selenium webdriver and controls the selenium generated webpage
+		
+		. selenium-manager: configures binary locations for selenium webdriver to use 
