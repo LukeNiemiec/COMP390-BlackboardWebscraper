@@ -1,5 +1,7 @@
 Project Proposal 1
 
+GROUP MEMBERS: Cecilia Rosado, Hunter Pollock, Filipe-Ziyad DeSouza, Luke Niemiec
+
 1. Problem Statement: Clearly describe the real-world problem your software will address.
 
 	Students want to access blackboard content locally in a filesystem without using blackboard UI and students can't access their courses on blackboard via the API.
