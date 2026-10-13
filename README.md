@@ -1,6 +1,6 @@
 ---
 
-# Blackboard Selenium Automation & Session Manager
+# Blackboard Webscraper
 
 A Python-based Selenium automation tool designed to persist browser sessions and cookies using a dedicated Firefox profile. The script initially attempts to run in **headless** mode; if an active session is not found, it launches a standard browser window allowing you to log in manually, saving your authenticated state for subsequent headless runs.
 
@@ -11,7 +11,6 @@ A Python-based Selenium automation tool designed to persist browser sessions and
 - **Persistent Sessions:** Uses a dedicated Firefox user profile to preserve cookies, sessions, and credentials across runs.
 - **Headless-First Operation:** Runs silently in the background unless authentication is required.
 - **Interactive Login Fallback:** Automatically switches to an interactive GUI mode if login credentials have expired or are missing.
-- **Bot Detection Evasion:** Modifies the browser runtime to hide standard `navigator.webdriver` flags.
 
 ---
 
@@ -94,3 +93,10 @@ python main.py
 
 - **GeckoDriver not found:** Ensure the directory containing `geckodriver` is added to your system `PATH`.
 - **Profile lock error:** Make sure no other Firefox windows using the designated profile are running when you execute the script.
+
+---
+
+### Whats Next
+
+- **Configure Selenium Downloads:** Make sure that selenium can download files from blackboard.
+- **HTML Element Extraction:** Find the right HTML elements to find on what page and get the desired content.
