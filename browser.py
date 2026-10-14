@@ -10,7 +10,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,6 +37,7 @@ class Browser:
 
         self.options = None
         self.driver = None
+        self.controller = None
         
 
     # waits until the page is loaded
@@ -86,12 +88,75 @@ class Browser:
         self.driver = webdriver.Firefox(
             options = self.options,
         )
-        
+
+        # setup the controller for sending keys to the browser
+        self.controller = ActionChains(self.driver)
         
         # hide javascript automation
         self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         self.driver.execute_script("Object.defineProperty(navigator, 'languages', {get: () => undefined})")
+        print("[+] User agent: ", self.driver.execute_script("return navigator.userAgent;"))
     
+
+    # scrolls down the page by a whole page view
+    def scroll_down_page(self):
+        if self.driver != None:
+            print("[+] Scrolling down page now.")
+            self.controller.send_keys(Keys.PAGE_DOWN).perform()
+
+            
+    # gets all course names and their elements from the main BSU page
+    def get_courses(self) -> dict:
+        if self.driver != None:
+
+            
+            print("[+] Getting courses now, waiting 10 seconds first")
+
+            # Implicit Wait  SRC: https://selenium-python.readthedocs.io/waits.html
+            self.driver.implicitly_wait(10)
+            
+
+            # matches webelements containing the classname "course-title" on the courses page
+            # SRC: https://selenium-python.readthedocs.io/locating-elements.html
+
+            wait = WebDriverWait(self.driver, 20)
+            
+            wait.until(                                                                                                                                                                                        
+               EC.presence_of_all_elements_located((By.CLASS_NAME, "course-title"))                                                                                                                          
+            )  
+
+            # find elements with the course-title class name within the dynamically loaded content
+            classes = self.driver.find_elements(By.CLASS_NAME, "course-title")
+            
+            class_cnt = len(classes)
+            found_elements = {}
+            prev_cnt = None
+
+            # while all all course elements arent found
+            while len(found_elements.keys()) < class_cnt:
+                
+                for cla in classes:
+                    # check if the element is visible and if its not found
+                    if cla.text != "" and cla.text not in found_elements.keys():
+                        found_elements[cla.text] = cla
+                        
+                if prev_cnt == len(found_elements):
+                    self.scroll_down_page()
+                    self.driver.implicitly_wait(1)
+                    
+                else:
+                    prev_cnt = len(found_elements)
+                    
+
+            print("[+] Successfully found all classes")
+
+            
+            # result format:
+            # { <course title>: <selenium element OBJ>}
+            return found_elements 
+            
+                    
+
 
     # if the webdrivewr gets caught at a login page handle it by asking user to login
     def login(self):
@@ -128,7 +193,7 @@ class Browser:
 
         
 
-        self.load_driver("login")
+        self.load_driver("headless")
         self.driver.get(self.url)
 
         self.wait_until_done()
@@ -143,6 +208,12 @@ class Browser:
             
         else:
             print(f"[+] Driver Successfully made it to {self.driver.current_url}")
+
+            
+            courses = self.get_courses()
+
+            print(courses)
+
             
         #TODO: here will be the extraction of courses and recurse into them
         
