@@ -61,6 +61,81 @@ class Browser:
         return o
 
 
+    # scrolls down the page by a whole page view
+    def scroll_down_page(self):
+        if self.driver != None:
+            print("[+] Scrolling down page now.")
+
+            current_height = self.driver.execute_script("return document.body.scrollHeight")
+
+            
+            
+            self.driver.execute_script(f"window.scrollBy({current_height}, {current_height*2});")
+            
+            current_height = self.driver.execute_script("return document.body.scrollHeight")
+            print(f"[+] New Height: {current_height}")
+
+
+            
+    # gets all course names and their elements from the main BSU page 
+    # TODO: ISSUE -> get_courses() can only gather 5 courses at a time from the home page in "headless" mode
+    def get_courses(self):
+        if self.driver != None:
+
+            # TODO: page scroll test
+            # document = self.driver.find_ele.ments(By.TAG_NAME, "html")
+            # document.send_keys(ARROW_DOWN)
+            
+            print("[+] Getting courses now, waiting 10 seconds first")
+
+            # Implicit Wait  SRC: https://selenium-python.readthedocs.io/waits.html
+            self.driver.implicitly_wait(10)
+
+            self.scroll_down_page()
+            self.driver.implicitly_wait(10)
+
+            # matches webelements containing the classname "course-title" on the courses page
+            # SRC: https://selenium-python.readthedocs.io/locating-elements.html
+
+            wait = WebDriverWait(self.driver, 20)
+            
+            wait.until(                                                                                                                                                                                        
+               EC.presence_of_all_elements_located((By.CLASS_NAME, "course-title"))                                                                                                                          
+            )  
+
+            
+            found_elements = {}
+            class_cnt = 0
+            prev_cnt = None
+            
+            while len(found_elements.keys()) < 6:
+                classes = self.driver.find_elements(By.CLASS_NAME, "course-title")
+                class_cnt = len(classes) 
+                
+
+                visible = len(found_elements)
+                
+                for cla in classes:
+                    if cla.text != "" and cla.text not in found_elements.keys():
+                        found_elements[cla.text] = cla
+                        print("\n".join([f for f in found_elements.keys()]), end = "\n\n")
+                        
+                if prev_cnt == len(found_elements):
+                    self.scroll_down_page()
+                    self.wait_until_done()
+                    
+                else:
+                    prev_cnt = len(found_elements)
+
+                
+
+            print(visible)
+            print("[+] Successfully found all classes")
+            for name, cla in found_elements.items():
+                print(name)
+            
+                    
+
         
     # loads the webdriver in modes: "login", "headless"
     def load_driver(self, mode):
@@ -79,7 +154,8 @@ class Browser:
         for key, value in DesiredCapabilities.FIREFOX.items():
             self.options.set_capability(key, value)
 
-            
+        self.options.add_argument("--start-maximized")      
+         
         # create firefox webdriver
         self.driver = webdriver.Firefox(
             options = self.options,
@@ -125,7 +201,7 @@ class Browser:
 
         
 
-        self.load_driver("headless")
+        self.load_driver("login")
         self.driver.get(self.url)
 
         self.wait_until_done()
@@ -140,7 +216,7 @@ class Browser:
             
         else:
             print(f"[+] Driver Successfully made it to {self.driver.current_url}")
-        
+            self.get_courses()
         #TODO: here will be the extraction of courses and recurse into them
         
         # class page:
@@ -216,9 +292,6 @@ if __name__ == "__main__":
     
     browser.main()
 
-
-    
-    input("\n Press enter to close")    
     browser.close()
     
     
