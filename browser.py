@@ -101,7 +101,7 @@ class Browser:
     # scrolls down the page by a whole page view
     def scroll_down_page(self):
         if self.driver != None:
-            print("[+] Scrolling down page now.")
+            # print("[+] Scrolling down page now.")
             self.controller.send_keys(Keys.PAGE_DOWN).perform()
 
             
@@ -142,7 +142,7 @@ class Browser:
                         
                 if prev_cnt == len(found_elements):
                     self.scroll_down_page()
-                    self.driver.implicitly_wait(1)
+                    self.driver.implicitly_wait(2)
                     
                 else:
                     prev_cnt = len(found_elements)
@@ -209,10 +209,12 @@ class Browser:
         else:
             print(f"[+] Driver Successfully made it to {self.driver.current_url}")
 
-            
             courses = self.get_courses()
-
-            print(courses)
+            print("[+] courses found")
+            # print out course names for validation
+            for course in [ k for k in courses.keys()][:7]:
+                print(course)
+            
 
             
         #TODO: here will be the extraction of courses and recurse into them
